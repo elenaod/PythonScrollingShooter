@@ -1,5 +1,3 @@
-from os import system
-
 # define some constants
 SIZE = 10
 MAX_HEALTH = 10
