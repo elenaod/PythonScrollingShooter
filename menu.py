@@ -25,23 +25,27 @@ class Menu:
             data = save_file.readline()
             self._game._player.read(data)
             while not data == "---\n":
-                enemy = Enemy()
-                enemy.read(data)
-                self._game.enemies.append(enemy)
-                self._game._board.place(enemy.x, enemy.y, enemy)
                 data = save_file.readline()
+                if not data == "---\n":
+                    enemy = Enemy()
+                    enemy.read(data)
+                    self._game.enemies.append(enemy)
+                    self._game._board.place(enemy.x, enemy.y, enemy)
             while not data == "...\n":
-                bullet = Bullet()
-                bullet.read(data)
-                self._game.bullets.append(bullet)
-                self._game._board.place(bullet.x, bullet.y, bullet)
                 data = save_file.readline()
+                if not data == "...\n":
+                    bullet = Bullet()
+                    bullet.read(data)
+                    self._game.bullets.append(bullet)
+                    self._game._board.place(bullet.x, bullet.y, bullet)
             while not data == "///\n":
-                bonus = Bonus()
-                bonus.read(data)
-                self._game.bonuses.append(bonus)
-                self._game._board.place(bonus.x, bonus.y, bonus)
-        self._game.play()
+                data = save_file.readline()
+                if not data == "///\n":
+                    bonus = Bonus()
+                    bonus.read(data)
+                    self._game.bonuses.append(bonus)
+                    self._game._board.place(bonus.x, bonus.y, bonus)
+        play(self._game)
          
     def exit(self):
         pass
