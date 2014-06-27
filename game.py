@@ -31,12 +31,17 @@ class Game:
         self.running = True
         self.enemies = []
         self.bullets = []
+        self.bonuses = []
         self.commands = {"move_player_left" : lambda : self._move_player((0,-1)), 
                          "move_player_right" : lambda : self._move_player((0,1)),
                          "move_player_up" : lambda : self._move_player((-1,0)),
                          "move_player_down" : lambda : self._move_player((1,0)),
                          "player_shoot" : lambda : self._add_bullet(),
-                         "game_stop" : lambda : self._stop()}
+                         "game_stop" : lambda : self._stop(),
+                         "wait" : lambda: self._wait()}
+
+    def _wait(self):
+        pass
 
     def _move_player(self, dirs):
         source = (self._player.x, self._player.y)
@@ -66,12 +71,13 @@ class Game:
         for enemy in self.enemies:
             source = (enemy.x, enemy.y)
             target = (enemy.x + enemy.dirs[0], enemy.y + enemy.dirs[1])
-            self._board.move_piece(source, target)
+            if not enemy.destroyed:            
+                self._board.move_piece(source, target)
         for enemy in self.enemies:
             if enemy.destroyed:
                 self.enemies.remove(enemy)
                 chance = randint(0,10)
-                if chance <= 2 and not outside_of_board(enemy.x + 1, enemy.y):
+                if chance <= 100 and not outside_of_board(enemy.x + 1, enemy.y):
                     bonus = Bonus(enemy.x, enemy.y, self._player.score // 10)
                     self._board.place(enemy.x, enemy.y, bonus)
         
@@ -79,15 +85,17 @@ class Game:
         for bullet in self.bullets:
             source = (bullet.x, bullet.y)
             target = (bullet.x + bullet.dirs[0], bullet.y + bullet.dirs[1])
-            self._board.move_piece(source, target)
+            if not bullet.destroyed:
+                self._board.move_piece(source, target)
         for bullet in self.bullets:
+            self._player.score += bullet.score
             if bullet.destroyed:
-                self._player.score += bullet.score
                 self.bullets.remove(bullet)
 
     def move(self):
         self._move_enemies()
-        self._move_bullets()                        
+        self._move_bullets()
+        self._board.cleanup()                        
                         
     def spawn_enemy(self):
         y = randint(0, SIZE - 1)
