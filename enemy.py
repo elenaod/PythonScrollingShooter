@@ -1,4 +1,5 @@
 from bases import *
+from inanimate import Bullet
 
 class Enemy(AnimateObject):
     def __init__(self, x=0, y=0, hits=MAX_HEALTH, timer=TIMER, ranged=False, wave=1):
@@ -7,6 +8,12 @@ class Enemy(AnimateObject):
         self.shooting = ranged
         self.dirs = (1, 0)
         
+    def shoot(self):
+        if self.shooting:
+            return Bullet(self.x + 1, self.y, "enemy")
+        else:
+            return None
+
     def read(self, data):
         super(Enemy, self).read(data)
         values = data.split(" ")
